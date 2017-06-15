@@ -1,9 +1,9 @@
 /*=====================================================
 *
 *	Author: Moses
-*	Filename: 
-*	Description: 
-*	Created:17 Feb 2017
+*	Filename: Keyboard.h
+*	Description: Keyboard Input Functions
+*	Created:14 June 2017
 *
 *======================================================*/
 
@@ -12,20 +12,24 @@
 #include <string.h>
 #include <stdio.h>
 #include <cstdlib>
-
+//#include <ctime>
 #include <ctype.h>
+#include <string>
 
 using namespace std;
+
 
 int readInt(string);
 double readDouble(string);
 float readFloat(string);
 char readChar(string);
 bool readBoolean(string);
+tm readDate(string);
+
 
 int main ()
 {
-	readBoolean("Please enter an Integer: ");
+	readDate("Please enter an Integer: ");
 }
 
 
@@ -163,5 +167,60 @@ bool readBoolean(string prompt)
 	}
 //	cout << value;
 	return value;
-
 }
+
+tm readDate(string prompt)
+{
+	cout << prompt;
+	string month [12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep","Oct", "Nov", "Dec"};
+	char enter[32];
+	int day;
+	int mon;
+	int year;
+	struct tm value = {0};
+	time_t timer;
+	time(&timer);
+	double seconds;
+
+	// to get the years since 2000
+	value.tm_hour = 0;
+	value.tm_min = 0;
+	value.tm_sec = 0;
+	value.tm_year = 100;
+	value.tm_mon = 0;
+	value.tm_mday = 1;
+	seconds = difftime(timer,mktime(&value));
+	value.tm_year = (seconds /60 / 60 / 24 / 365) ;
+	//
+	bool dateOnly = false;
+	while (dateOnly == false)
+	{
+		cin >> enter;
+		char * pch;
+		pch = strtok (enter, "/-");
+		day = stoi(pch);
+		value.tm_mday = day;
+		pch = strtok (NULL, "/-");
+		mon = stoi(pch);
+		value.tm_mon = mon - 1;
+		pch = strtok (NULL, "/-");
+		year = stoi(pch);
+		value.tm_year = year;
+		pch = strtok (NULL, "/-");
+		if(day > 31 || mon > 12 || year > (2000 +value.tm_year))
+		{
+			dateOnly = false;
+			cout << "Please Enter A Valid Date (DD/MM/YYYY): ";
+		}
+		else
+			dateOnly = true;
+	}
+	cout << day;
+	cout << " ";
+	cout << month[mon - 1];
+	cout << " ";
+	cout << year;
+
+	return value;
+}
+
